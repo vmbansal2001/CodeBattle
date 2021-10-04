@@ -20,4 +20,9 @@ from BattleZone import views
 urlpatterns = [
     path('', views.index, name='home'),
     path('sign_in', views.sign_in, name='sign_in'),
+    path('welcomeNote',views.welcomeNote, name='welcome'),
+    path('room',views.room, name='room'),
+    path('createRoom',views.createRoom, name='createRoom'),
+    path('enterRoom',views.enterRoom, name='enterRoom'),
+    path('playersPage',views.playersPage, name='playersPage'),
 ]
