@@ -1,32 +1,32 @@
 {% extends 'base.html' %} {% block body %}
+
 <body>
-  <div class="container">
-    <div class="row">
-      <div class="col">
-        <form action="#">
-          <div class="form-group">
-            <label for="questions">No. of questions</label>
-            <input type="number" class="form-control" id="questions" />
+  <div class="container" style="padding: 35px;">
+    <form action="#">
+      <div class="container" style="text-align: center; padding: 125px;">
+        <div class="form-group">
+          <label for="questions" class="form-label">No. of questions</label>
+          <div class="container-fluid">
+            <input type="range" class="w-75 p-3" min="0" max="10" id="questions"
+              oninput="this.nextElementSibling.value = this.value">
+            <output>5</output>
           </div>
-          <div class="form-group">
-            <label for="players">No. of players</label>
-            <input type="number" class="form-control" id="players" />
+        </div>
+        <div class="form-group">
+          <label for="players">No. of players</label>
+          <div class="container-fluid">
+            <input type="range" value=2 class="w-75 p-3" min="0" max="10" id="players"
+              oninput="this.nextElementSibling.value = this.value">
+            <output>2</output>
           </div>
-          <a href="/playersPage" class="btn btn-success">Generate code</a>
-        </form>
+        </div>
       </div>
-    </div>
+      <div class="container-xxl">
+        <a href="/playersPage" class="btn btn-dark"
+          style="display: flex; align-items: center; justify-content: center;">Generate code</a>
+      </div>
+    </form>
+
   </div>
-
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
-    crossorigin="anonymous"
-  ></script>
-
-  <script
-    src="https://kit.fontawesome.com/405cbb940a.js"
-    crossorigin="anonymous"
-  ></script>
 </body>
 {%endblock body%}
