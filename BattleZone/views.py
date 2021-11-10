@@ -24,3 +24,6 @@ def playersPage(request):
         'players' : ['Sandeep','Vipul','Rajjo']
     }
     return render(request, 'players.html', context)
+
+def signUp(request):
+    return render(request, 'signup.html')
