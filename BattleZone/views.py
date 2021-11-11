@@ -1,23 +1,74 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+from django.contrib.auth import logout, authenticate, login
+from django.contrib import messages
 
 # Create your views here.
 def index(request): 
-    return render(request, 'index.html')
+    loginStatus = True
+    if request.user.is_anonymous:
+        loginStatus = False
+    context = {
+        'loginStatus' : loginStatus,
+    }
+    return render(request, 'index.html', context)
 
 def sign_in(request): 
-    return render(request, 'register.html')
+    loginStatus = False
+    if request.method=="POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            loginStatus = True
+            context = {'loginStatus' : loginStatus}
+            return render(request, 'welcomeNote.html', context)
+
+        else:
+            messages.error(request, 'Oops! Seems you entered wrong credentials')
+
+    if request.user.is_anonymous:
+        context = {'loginStatus' : False}
+        return render(request, 'register.html', context)
+    else:
+        context = {'loginStatus' : True}
+        return render(request, 'welcomeNote.html', context)
 
 def welcomeNote(request):
-    return render(request, 'welcomeNote.html')
+    if request.user.is_anonymous:
+        return redirect('/sign_in')
+    else:
+        context = {'loginStatus' : True}
+        return render(request, 'welcomeNote.html', context)
 
 def room(request):
-    return render(request, 'room.html')
+    loginStatus = True
+    if request.user.is_anonymous:
+        loginStatus = False
+    context = {
+        'loginStatus' : loginStatus,
+    }
+    return render(request, 'room.html', context)
 
 def createRoom(request):
-    return render(request, 'createRoom.html')
+    loginStatus = True
+    if request.user.is_anonymous:
+        loginStatus = False
+    context = {
+        'loginStatus' : loginStatus,
+    }
+    return render(request, 'createRoom.html', context)
 
 def enterRoom(request):
-    return render(request, 'enterRoom.html')
+    loginStatus = True
+    if request.user.is_anonymous:
+        loginStatus = False
+    context = {
+        'loginStatus' : loginStatus,
+    }
+    return render(request, 'enterRoom.html', context)
 
 def playersPage(request):
     context= {
@@ -26,4 +77,14 @@ def playersPage(request):
     return render(request, 'players.html', context)
 
 def signUp(request):
-    return render(request, 'signup.html')
+    loginStatus = True
+    if request.user.is_anonymous:
+        loginStatus = False
+    context = {
+        'loginStatus' : loginStatus,
+    }
+    return render(request, 'signup.html', context)
+
+def logoutUser(request):
+    logout(request)
+    return redirect('/')

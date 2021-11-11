@@ -16,6 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+admin.site.site_header = "CodeBattle"
+admin.site.site_title = "CodeBattleAdmin"
+admin.site.index_title = "Welcome to CodeBattle Admin Page !"
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('BattleZone.urls'))

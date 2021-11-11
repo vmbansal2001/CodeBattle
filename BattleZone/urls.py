@@ -26,4 +26,5 @@ urlpatterns = [
     path('enterRoom',views.enterRoom, name='enterRoom'),
     path('playersPage',views.playersPage, name='playersPage'),
     path('signUp',views.signUp, name='signUp'),
+    path('logout', views.logoutUser, name='logout')
 ]
