@@ -1,7 +1,10 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
+from django.contrib.auth.models import User
+from BattleZone.models import PersonalInfo2
 
+## additionalinfo
 # Create your views here.
 def index(request): 
     loginStatus = True
@@ -35,6 +38,36 @@ def sign_in(request):
     else:
         context = {'loginStatus' : True}
         return render(request, 'welcomeNote.html', context)
+
+def signUp(request):
+    if request.method=="POST":
+        username = request.POST.get('username')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        city = request.POST.get('city')
+        gender = request.POST.get('GenderOptions')
+        occupation = request.POST.get('OccupationOptions')
+        language = request.POST.get('language')
+        
+        user = User.objects.create_user(username, email, password)
+        user.first_name = first_name
+        user.last_name = last_name
+        add_info = PersonalInfo2()
+        add_info.City = city
+        add_info.Gender = gender
+        add_info.Occupation = occupation
+        add_info.PreferredProgrammingLanguage = language
+        user.personalinfo2 = add_info
+        add_info.save()
+        user.save()
+
+    if request.user.is_anonymous:
+        return render(request, 'signup.html')
+    else:
+        return redirect('/welcomeNote')
+    
 
 def welcomeNote(request):
     if request.user.is_anonymous:
@@ -75,15 +108,6 @@ def playersPage(request):
         'players' : ['Sandeep','Vipul','Rajjo']
     }
     return render(request, 'players.html', context)
-
-def signUp(request):
-    loginStatus = True
-    if request.user.is_anonymous:
-        loginStatus = False
-    context = {
-        'loginStatus' : loginStatus,
-    }
-    return render(request, 'signup.html', context)
 
 def logoutUser(request):
     logout(request)
