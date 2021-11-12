@@ -27,7 +27,7 @@ def sign_in(request):
             login(request, user)
             loginStatus = True
             context = {'loginStatus' : loginStatus}
-            return render(request, 'welcomeNote.html', context)
+            return redirect('/welcomeNote')
 
         else:
             messages.error(request, 'Oops! Seems you entered wrong credentials')
@@ -62,6 +62,7 @@ def signUp(request):
         user.personalinfo2 = add_info
         add_info.save()
         user.save()
+        messages.success(request, 'Wohoo!! Your Account has been created successfully!')
 
     if request.user.is_anonymous:
         return render(request, 'signup.html')
@@ -79,7 +80,7 @@ def welcomeNote(request):
 def room(request):
     loginStatus = True
     if request.user.is_anonymous:
-        loginStatus = False
+        return redirect('/sign_in')
     context = {
         'loginStatus' : loginStatus,
     }
@@ -88,7 +89,7 @@ def room(request):
 def createRoom(request):
     loginStatus = True
     if request.user.is_anonymous:
-        loginStatus = False
+        return redirect('/sign_in')
     context = {
         'loginStatus' : loginStatus,
     }
@@ -97,13 +98,15 @@ def createRoom(request):
 def enterRoom(request):
     loginStatus = True
     if request.user.is_anonymous:
-        loginStatus = False
+        return redirect('/sign_in')
     context = {
         'loginStatus' : loginStatus,
     }
     return render(request, 'enterRoom.html', context)
 
 def playersPage(request):
+    if request.user.is_anonymous:
+        return redirect('/sign_in')
     context= {
         'players' : ['Sandeep','Vipul','Rajjo']
     }

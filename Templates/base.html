@@ -16,7 +16,7 @@
       <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#expandNav">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <a href="/" class="navbar-brand">CodeBattle</a>
+      <a href="/" class="navbar-brand"><i class="fab fa-battle-net"></i> CodeBattle</a>
       <div class="collapse navbar-collapse" id="expandNav">
         <div class="navbar-nav">
           <a href="/" class="nav-item nav-link">Home</a>
@@ -33,7 +33,8 @@
 
       {% if loginStatus %}
       <div class="dropdown show">
-        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
           <i class="fas fa-user-alt"></i> {{request.user}}
         </a>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -51,28 +52,52 @@
 
   {%block body%} {%endblock body%}
 
-  <div class="container-fluid bg-light">
-    <div class="container-xxl hstack gap-3">
-      <div>
-        <a href="#" class="navbar-brand">CodeBattle</a>
-        <blockquote class="blockquote">
-          <p>A well-known quote, contained in a blockquote element.</p>
-        </blockquote>
-        <div class="navbar-nav hstack gap-3">
-          <a href="" class="nav-item nav-link"><i class="fab fa-github"></i></a>
-          <a href="" class="nav-item nav-link"><i class="fab fa-instagram"></i></a>
-          <a href="" class="nav-item nav-link"><i class="fab fa-slack"></i></a>
+  <div style="box-shadow: 0px 0px 4px 0px gray; background-color: lightcyan; opacity: 90%;">
+    <footer>
+      <div class="container px-1 py-3" id="hanging-icons">
+        <h2 class="pb-2 border-bottom"><i class="fab fa-battle-net"></i> Code Battle</h2>
+        <div class="row g-3 py-2 row-cols-1 row-cols-lg-2">
+          <div class="col d-flex align-items-start">
+            <div class="icon-square bg-light text-dark flex-shrink-0 me-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                class="bi bi-lightning-fill" viewBox="0 0 16 16">
+                <path
+                  d="M5.52.359A.5.5 0 0 1 6 0h4a.5.5 0 0 1 .474.658L8.694 6H12.5a.5.5 0 0 1 .395.807l-7 9a.5.5 0 0 1-.873-.454L6.823 9.5H3.5a.5.5 0 0 1-.48-.641l2.5-8.5z" />
+              </svg>
+            </div>
+            <div>
+              <h2> Battle Zone</h2>
+              <p>Engage in a code fight. Build your team, choose your opponent and let the match begin! Enter the Game.</p>
+              <a href="/room" class="btn btn-primary">
+                Enter
+              </a>
+            </div>
+          </div>
+          <div class="col d-flex align-items-start">
+            <div class="icon-square bg-light text-dark flex-shrink-0 me-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-pen"
+                viewBox="0 0 16 16">
+                <path
+                  d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z" />
+              </svg>
+            </div>
+            <div>
+              <h2> Practice</h2>
+              <p>Boost up your skills, Pace up your Speed, Improve your abilities to be ready for an actual battle.</p>
+              <a href="#" class="btn btn-primary">
+                Start
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align: right;">
+          <a href="#"><i class="fa fa-telegram fa-2x" aria-hidden="true"></i></a>&nbsp;
+          <a href="#"><i class="fa fa-whatsapp fa-2x" aria-hidden="true"></i></a>&nbsp;
+          <a href="#"><i class="fa fa-instagram fa-2x" aria-hidden="true"></i></a>
         </div>
       </div>
-      <div class="ms-auto">
-        <h1>Links</h1>
-        <div class="navbar-nav">
-          <a href="" class="nav-item nav-link">Home</a>
-          <a href="" class="nav-item nav-link">About</a>
-          <a href="" class="nav-item nav-link">Contact</a>
-        </div>
-      </div>
-    </div>
+    </footer>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
