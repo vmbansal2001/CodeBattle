@@ -52,7 +52,8 @@
       <!-- Three columns of text below the carousel -->
       <div class="row" style="text-align: center;">
         <div class="col">
-          <img class="rounded-circle" src="../static/vipul.jpeg" alt="Generic placeholder image" width="240" height="240" style="margin: 12px;">
+          {% load static %}
+          <img class="rounded-circle" src="{% static 'vipul.jpeg' %}" alt="Generic placeholder image" width="240" height="240" style="margin: 12px;">
           <h2>Vipul Bansal</h2>
           <p>Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Nullam id dolor id nibh ultricies vehicula ut id elit. Morbi leo risus, porta ac consectetur ac, vestibulum at eros. Praesent commodo cursus magna.</p>
           <p><a href="https://www.linkedin.com/in/vipul-bansal/"><i class="fab fa-linkedin fa-2x" aria-hidden="true"></i></a>&nbsp;
@@ -60,7 +61,7 @@
             <a href="https://www.instagram.com/vipulbnsal/"><i class="fab fa-instagram-square fa-2x" aria-hidden="true"></i></a></p>
         </div><!-- /.col-lg-4 -->
         <div class="col">
-          <img class="rounded-circle" src="../static/sandeep.jpg" alt="Generic placeholder image" width="240" height="240" style="margin: 12px;">
+          <img class="rounded-circle" src="{% static 'sandeep.jpg' %}" alt="Generic placeholder image" width="240" height="240" style="margin: 12px;">
           <h2>Sandeep Jha</h2>
           <p>Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras mattis consectetur purus sit amet fermentum. Fusce dapibus, tellus ac cursus commodo.</p>
           <p><a href="https://www.linkedin.com/in/ft-jsandeep/"><i class="fab fa-linkedin fa-2x" aria-hidden="true"></i></a>&nbsp;
@@ -105,7 +106,7 @@
         </div>
         <div class="col-md-5">
           <img class="featurette-image img-fluid mx-auto" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
-        </div>
+        </div> 
       </div>
 
       <hr class="featurette-divider"> -->

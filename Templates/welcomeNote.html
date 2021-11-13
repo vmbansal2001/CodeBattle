@@ -14,7 +14,8 @@
             onclick="window.location.href='/room'">Enter the BattleZone</button></p>
       </div>
       <div class="col" style="text-align: end;">
-        <img src="../static/codebattle.jpg" class="img-fluid" alt="" width="60%" style="border-radius: 25px;">
+        {%load static%}
+        <img src="{% static 'codebattle.jpg' %}" class="img-fluid" alt="" width="60%" style="border-radius: 25px;">
       </div>
     </div>
 
