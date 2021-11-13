@@ -1,8 +1,10 @@
+from typing import cast
 from django.shortcuts import redirect, render
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
 from django.contrib.auth.models import User
 from BattleZone.models import PersonalInfo2
+from django.contrib.auth.models import User
 
 ## additionalinfo
 # Create your views here.
@@ -50,6 +52,14 @@ def signUp(request):
         gender = request.POST.get('GenderOptions')
         occupation = request.POST.get('OccupationOptions')
         language = request.POST.get('language')
+
+        if User.objects.filter(email=email).exists():
+            messages.warning(request, 'This user already exists')
+            return redirect('/signUp')
+
+        if User.objects.filter(username=username).exists():
+            messages.warning(request, 'This username isn\'t available')
+            return redirect('/signUp')
         
         user = User.objects.create_user(username, email, password)
         user.first_name = first_name
@@ -63,6 +73,7 @@ def signUp(request):
         add_info.save()
         user.save()
         messages.success(request, 'Wohoo!! Your Account has been created successfully!')
+        return redirect('/sign_in')
 
     if request.user.is_anonymous:
         return render(request, 'signup.html')
@@ -115,3 +126,12 @@ def playersPage(request):
 def logoutUser(request):
     logout(request)
     return redirect('/')
+
+def about(request):
+    loginStatus = True
+    if request.user.is_anonymous:
+        loginStatus = False
+    context = {
+        'loginStatus' : loginStatus,
+    }
+    return render(request, 'about.html', context)
