@@ -135,3 +135,12 @@ def about(request):
         'loginStatus' : loginStatus,
     }
     return render(request, 'about.html', context)
+    
+def ide(request):
+    loginStatus = True
+    if request.user.is_anonymous:
+        return redirect('/sign_in')
+    context = {
+        'loginStatus' : loginStatus,
+    }
+    return render(request, 'ide.html', context)
