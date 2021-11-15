@@ -126,22 +126,34 @@ def playersPage(request):
     loginStatus = True
     if request.user.is_anonymous:
         return redirect('/sign_in')
+
     if request.method=="POST":
-        no_of_questions = int(request.POST.get('no_of_questions'))
-        no_of_players = int(request.POST.get('no_of_players'))
+        if 'create_room' in request.POST:
+            no_of_questions = int(request.POST.get('no_of_questions'))
+            no_of_players = int(request.POST.get('no_of_players'))
 
-        if Room.objects.filter(room_admin=request.user.username).exists():
-            room = Room.objects.get(room_admin=request.user.username)
-            no_of_questions = room.no_of_questions
-            no_of_players = room.no_of_players
-            messages.info(request, 'You can\'t create or join another room until you delete this room')
+            if Room.objects.filter(room_admin=request.user.username).exists():
+                room = Room.objects.get(room_admin=request.user.username)
+                no_of_questions = room.no_of_questions
+                no_of_players = room.no_of_players
+                messages.info(request, 'You can\'t create or join another room until you delete this room')
 
-        else:
-            room_code = random.randint(100000,999999)
-            while Room.objects.filter(room_code=room_code).exists():
+            else:
                 room_code = random.randint(100000,999999)
-            room = Room(room_code=room_code, room_admin=request.user.username, no_of_questions=no_of_questions, no_of_players=no_of_players, date=datetime.today())
-            room.save()
+                while Room.objects.filter(room_code=room_code).exists():
+                    room_code = random.randint(100000,999999)
+                room = Room(room_code=room_code, room_admin=request.user.username, no_of_questions=no_of_questions, no_of_players=no_of_players, date=datetime.today())
+                room.save()
+
+        elif 'enter_room' in request.POST:
+            room_code = request.POST.get('room_code')
+            if Room.objects.filter(room_code=room_code).exists():
+                room = Room.objects.get(room_code=room_code)
+                no_of_players = room.no_of_players
+            else:
+                messages.info(request, 'This room doesn\'t exist')
+                return redirect('/enterRoom')
+
     if request.user.is_anonymous:
         return redirect('/sign_in')
 
