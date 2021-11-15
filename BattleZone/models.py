@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.deletion import SET_NULL
 
 class PersonalInfo2(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -31,3 +32,17 @@ class PersonalInfo2(models.Model):
     ]
 
     PreferredProgrammingLanguage = models.CharField(max_length=10, choices=LANGUAGE_CHOICES)
+
+class Room(models.Model):
+    room_code = models.IntegerField(primary_key=True)
+    room_admin = models.CharField(max_length=100)
+    no_of_questions = models.IntegerField(default=3)
+    no_of_players = models.IntegerField(default=1)
+    date = models.DateField()
+    players = []
+    print(no_of_players)
+    for player in range(10):
+        players.append(models.ForeignKey('User', on_delete=SET_NULL, null=True))
+
+    def __str__(self):
+        return str(self.room_code)

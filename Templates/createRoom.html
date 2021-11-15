@@ -2,12 +2,13 @@
 
 <body>
   <div class="container" style="padding: 35px;">
-    <form action="#">
+    <form method="post" action="/playersPage">
+      {% csrf_token %}
       <div class="container" style="text-align: center; padding: 125px;">
         <div class="form-group">
           <label for="questions" class="form-label">No. of questions</label>
           <div class="container-fluid">
-            <input type="range" class="w-75" min="0" max="10" id="questions"
+            <input type="range" class="w-75" min="0" max="10" id="questions" name="no_of_questions"
               oninput="this.nextElementSibling.value = this.value">
             <output>5</output>
           </div>
@@ -15,15 +16,14 @@
         <div class="form-group" style="padding-top: 2em;">
           <label for="players">No. of players</label>
           <div class="container-fluid">
-            <input type="range" value=2 class="w-75" min="0" max="10" id="players"
+            <input type="range" value=2 class="w-75" min="0" max="10" id="players" name="no_of_players"
               oninput="this.nextElementSibling.value = this.value">
             <output>2</output>
           </div>
         </div>
       </div>
-      <div class="container-xxl">
-        <a href="/playersPage" class="btn btn-dark"
-          style="display: flex; align-items: center; justify-content: center;">Generate code</a>
+      <div class="text-center">
+        <button class="btn btn-success" type="submit">Generate code</button>
       </div>
     </form>
 

@@ -3,8 +3,10 @@ from django.shortcuts import redirect, render
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
 from django.contrib.auth.models import User
-from BattleZone.models import PersonalInfo2
+from BattleZone.models import PersonalInfo2, Room
 from django.contrib.auth.models import User
+import random
+from datetime import datetime
 
 ## additionalinfo
 # Create your views here.
@@ -116,10 +118,30 @@ def enterRoom(request):
     return render(request, 'enterRoom.html', context)
 
 def playersPage(request):
+    loginStatus = True
     if request.user.is_anonymous:
         return redirect('/sign_in')
+    if request.method=="POST":
+        no_of_questions = int(request.POST.get('no_of_questions'))
+        no_of_players = int(request.POST.get('no_of_players'))
+
+        if Room.objects.filter(room_admin=request.user.username).exists():
+            room = Room.objects.get(room_admin=request.user.username)
+            messages.info(request, 'You can\'t create or join another room until you delete this room')
+
+        else:
+            room_code = random.randint(100000,999999)
+            while Room.objects.filter(room_code=room_code).exists():
+                room_code = random.randint(100000,999999)
+            room = Room(room_code=room_code, room_admin=request.user.username, no_of_questions=no_of_questions, no_of_players=no_of_players, date=datetime.today())
+            room.save()
+    if request.user.is_anonymous:
+        return redirect('/sign_in')
+        
     context= {
-        'players' : ['Sandeep','Vipul','Rajjo']
+        'roomCode': room.room_code,
+        'players' : range(no_of_players),
+        'loginStatus': loginStatus
     }
     return render(request, 'players.html', context)
 
@@ -137,10 +159,15 @@ def about(request):
     return render(request, 'about.html', context)
     
 def ide(request):
+    room = Room.objects.get(room_admin=request.user.username)
+    no_of_questions = int(room.no_of_questions)
+    no_of_players = int(room.no_of_players)
     loginStatus = True
     if request.user.is_anonymous:
         return redirect('/sign_in')
     context = {
         'loginStatus' : loginStatus,
+        'no_of_players': no_of_players,
+        'no_of_questions': range(1,no_of_questions+1),
     }
     return render(request, 'ide.html', context)
