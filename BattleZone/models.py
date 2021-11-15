@@ -40,8 +40,7 @@ class Room(models.Model):
     no_of_players = models.IntegerField(default=1)
     date = models.DateField()
     players = []
-    print(no_of_players)
-    for player in range(10):
+    for player in range(1):
         players.append(models.ForeignKey('User', on_delete=SET_NULL, null=True))
 
     def __str__(self):

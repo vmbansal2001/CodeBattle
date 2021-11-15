@@ -1,26 +1,59 @@
 {% extends 'base.html' %} {% block body %}
 {% csrf_token %}
 
-<div>
+{% load static %}
+<link href="{% static 'styles/players.css' %}" <div>
 
-  {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      {{message}}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-      </button>
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-danger alert-dismissible fade show" role="alert">
+  {{message}}
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+{% endfor %}
+{% endif %}
+
+<main role="main" class="container-fluid">
+  <div class="d-flex align-items-center p-3 mx-2 my-3 text-white-50 bg-dark rounded box-shadow row">
+    <div class="col-1">
+      <i class="fas fa-users fa-3x" style="color: white;padding-right: 12px;"></i>
+    </div>
+    <div class="lh-100 col-9" style="padding: 8px;">
+      <h2 class="mb-0 text-white lh-100">Room Code : {{ roomCode }}</h2>
+      <div class="text-white">Room admin : {{ roomAdmin }}</div>
+    </div>
+    <div class="col-2">
+      <form method="post" action="/createRoom">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-outline-light">Delete Room</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="p-3 bg-white rounded box-shadow">
+    <h6 class="pb-2 mb-0">Players in the room</h6>
+    {% for player in players %}
+    <div class="media text-muted row"
+      style="background-color:whitesmoke;border-radius: 12px;margin-top: 12px;padding: 12px;">
+      <div class="col-1">
+        <img src="{% static 'default.png' %}" alt="" class="mr-2 rounded" style="height: 48px; width: 48px;">
+      </div>
+      <div class="media-body mb-0 small lh-125 col-11">
+        <div class="d-flex justify-content-between w-100">
+          <strong class="text-gray-dark">Player {{ player }}</strong>
+          <a href="#">Follow</a>
+        </div>
+        <span class="d-block">@username</span>
+      </div>
     </div>
     {% endfor %}
-    {% endif %}
-
-<h2>Room Code = {{roomCode}}</h2>
-<ul>
-  {% for player in players %}
-  <li>Player {{ player }}</li>
-  {% endfor %}
-</ul>
-<a href="/ide" class="btn btn-info btn-lg">Start the battle</a>
+  </div>
+</main>
+<div style="text-align: center;padding-bottom: 1em;">
+  <a href="/ide" class="btn btn-info btn-lg">Start the battle</a>
+</div>
 </div>
 
 {%endblock body%}

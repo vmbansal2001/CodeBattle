@@ -8,7 +8,6 @@ from django.contrib.auth.models import User
 import random
 from datetime import datetime
 
-## additionalinfo
 # Create your views here.
 def index(request): 
     loginStatus = True
@@ -106,6 +105,12 @@ def createRoom(request):
     context = {
         'loginStatus' : loginStatus,
     }
+
+    if request.method=="POST":
+        if Room.objects.filter(room_admin=request.user.username):
+            room = Room.objects.get(room_admin=request.user.username)
+            room.delete()
+
     return render(request, 'createRoom.html', context)
 
 def enterRoom(request):
@@ -127,6 +132,8 @@ def playersPage(request):
 
         if Room.objects.filter(room_admin=request.user.username).exists():
             room = Room.objects.get(room_admin=request.user.username)
+            no_of_questions = room.no_of_questions
+            no_of_players = room.no_of_players
             messages.info(request, 'You can\'t create or join another room until you delete this room')
 
         else:
@@ -137,11 +144,12 @@ def playersPage(request):
             room.save()
     if request.user.is_anonymous:
         return redirect('/sign_in')
-        
+
     context= {
         'roomCode': room.room_code,
-        'players' : range(no_of_players),
-        'loginStatus': loginStatus
+        'players' : range(1,no_of_players+1),
+        'loginStatus': loginStatus,
+        'roomAdmin': room.room_admin,
     }
     return render(request, 'players.html', context)
 
