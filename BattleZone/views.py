@@ -1,12 +1,11 @@
-from typing import cast
 from django.shortcuts import redirect, render
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
-from django.contrib.auth.models import User
-from BattleZone.models import PersonalInfo2, Room
+from BattleZone.models import PersonalInfo2, Room, Player
 from django.contrib.auth.models import User
 import random
 from datetime import datetime
+from BattleZone.player_add_remove import addPlayer, removePlayer
 
 # Create your views here.
 def index(request): 
@@ -115,11 +114,30 @@ def createRoom(request):
 
 def enterRoom(request):
     loginStatus = True
+    if request.method == "POST":
+        room_code = request.POST.get('room_code')
+        room = Room.objects.get(room_code=room_code)
+        player1 = request.user
+        removePlayer(room=room, player=player1)
+
     if request.user.is_anonymous:
         return redirect('/sign_in')
     context = {
         'loginStatus' : loginStatus,
     }
+
+    # if request.method=="POST":
+    #     roomCode = request.POST.get('room_code')
+    #     if Room.objects.filter(room_code=roomCode):
+    #         player = request.user
+    #         if room.player2 == player:
+    #             room.player2 = None
+    #             room.save()
+    #         #TODO: improve room model
+
+
+
+
     return render(request, 'enterRoom.html', context)
 
 def playersPage(request):
@@ -128,40 +146,49 @@ def playersPage(request):
         return redirect('/sign_in')
 
     if request.method=="POST":
+        currentPlayersCount = 0
+        admin_user = None
         if 'create_room' in request.POST:
+            admin_user = True
             no_of_questions = int(request.POST.get('no_of_questions'))
-            no_of_players = int(request.POST.get('no_of_players'))
 
             if Room.objects.filter(room_admin=request.user.username).exists():
                 room = Room.objects.get(room_admin=request.user.username)
-                no_of_questions = room.no_of_questions
-                no_of_players = room.no_of_players
+                currentPlayersCount = room.currentPlayersCount
                 messages.info(request, 'You can\'t create or join another room until you delete this room')
 
             else:
                 room_code = random.randint(100000,999999)
                 while Room.objects.filter(room_code=room_code).exists():
                     room_code = random.randint(100000,999999)
-                room = Room(room_code=room_code, room_admin=request.user.username, no_of_questions=no_of_questions, no_of_players=no_of_players, date=datetime.today())
+                
+                player1 = request.user
+                player_node = Player(prev=None, player=player1, next=None)
+                room = Room(room_code=room_code, room_admin=request.user.username, no_of_questions=no_of_questions, currentPlayersCount=1, date=datetime.today(), head=player_node, tail=player_node)
+                player_node.in_room = room_code
+                player_node.save()
                 room.save()
+                currentPlayersCount = room.currentPlayersCount
 
         elif 'enter_room' in request.POST:
+            admin_user = False
             room_code = request.POST.get('room_code')
             if Room.objects.filter(room_code=room_code).exists():
                 room = Room.objects.get(room_code=room_code)
-                no_of_players = room.no_of_players
+                player1 = request.user
+                addPlayer(player=player1, room=room)
+                
             else:
                 messages.info(request, 'This room doesn\'t exist')
                 return redirect('/enterRoom')
-
-    if request.user.is_anonymous:
-        return redirect('/sign_in')
+            currentPlayersCount = room.currentPlayersCount
 
     context= {
         'roomCode': room.room_code,
-        'players' : range(1,no_of_players+1),
+        'players' : range(1,currentPlayersCount+1),
         'loginStatus': loginStatus,
         'roomAdmin': room.room_admin,
+        'admin_user': admin_user,
     }
     return render(request, 'players.html', context)
 
@@ -179,15 +206,16 @@ def about(request):
     return render(request, 'about.html', context)
     
 def ide(request):
-    room = Room.objects.get(room_admin=request.user.username)
-    no_of_questions = int(room.no_of_questions)
-    no_of_players = int(room.no_of_players)
-    loginStatus = True
-    if request.user.is_anonymous:
-        return redirect('/sign_in')
-    context = {
-        'loginStatus' : loginStatus,
-        'no_of_players': no_of_players,
-        'no_of_questions': range(1,no_of_questions+1),
-    }
-    return render(request, 'ide.html', context)
+    if Room.objects.filter(room_admin=request.user.username):
+        room = Room.objects.get(room_admin=request.user.username)
+        no_of_questions = int(room.no_of_questions)
+        loginStatus = True
+        if request.user.is_anonymous:
+            return redirect('/sign_in')
+        context = {
+            'loginStatus' : loginStatus,
+            'no_of_questions': range(1,no_of_questions+1),
+        }
+        return render(request, 'ide.html', context)
+    else:
+        return redirect('/createRoom')

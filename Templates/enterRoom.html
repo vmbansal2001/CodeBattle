@@ -1,30 +1,67 @@
 {% extends 'base.html' %} {% block body %}
 
 <body>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity=
+"sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous">
+    </script>
+
   <h1 style="text-align: center; padding: 25px;">Enter RoomCode</h1>
   <div class="container">
-  {% if messages %}
+    {% if messages %}
     {% for message in messages %}
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
       {{message}}
-      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
+      <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close">
       </button>
     </div>
     {% endfor %}
     {% endif %}
   </div>
   <div class="container" style="padding: 125px;">
-  <form method="post" action="/playersPage">
-    {% csrf_token %}
-    <div class="mb-3">
-      <input type="text" class="form-control" placeholder="Enter roomcode" aria-label="Enter roomcode"
-      aria-describedby="button-addon2" name="room_code" required>
-    </div>
-    <div class="text-center">
-      <button class="btn btn-success" type="submit" name="enter_room">Start</button>
-    </div>
-  </form>
+    <form method="post" action="/playersPage">
+      {% csrf_token %}
+      <div class="mb-3">
+        <input type="number" id="name" class="form-control" placeholder="Enter roomcode" aria-label="Enter roomcode"
+          aria-describedby="button-addon2" name="room_code" required>
+      </div>
+      <div class="text-center">
+        <button type="button" class="btn btn-dark" data-toggle="modal" id="start" data-target="#exampleModal" name="enter_room">
+          Start
+        </button>
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Do You Want to Enter this Room?</h5>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close">
+                </button>
+              </div>
+              <div class="modal-body">
+                <h6 id="modal_body"></h6>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" aria-label="Close">No</button>
+                <button class="btn btn-secondary" type="submit" name="enter_room">Yes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <button class="btn btn-success" type="submit" name="enter_room">Start</button> -->
+      </div>
+    </form>
   </div>
+
+  <script type="text/javascript">
+    $("#start").click(function () {
+        var name = $("#name").val();
+        var str = "Room Code: " 
+            + name;
+        $("#modal_body").html(str);
+    });
+</script>
 </body>
 {%endblock body%}

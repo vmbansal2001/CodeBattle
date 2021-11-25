@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from BattleZone.models import Room
+from BattleZone.models import Room, Player
 
 from BattleZone.models import PersonalInfo2
 
@@ -20,3 +20,4 @@ class UserAdmin(BaseUserAdmin):
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(Room)
+admin.site.register(Player)
