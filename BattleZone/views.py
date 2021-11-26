@@ -125,19 +125,6 @@ def enterRoom(request):
     context = {
         'loginStatus' : loginStatus,
     }
-
-    # if request.method=="POST":
-    #     roomCode = request.POST.get('room_code')
-    #     if Room.objects.filter(room_code=roomCode):
-    #         player = request.user
-    #         if room.player2 == player:
-    #             room.player2 = None
-    #             room.save()
-    #         #TODO: improve room model
-
-
-
-
     return render(request, 'enterRoom.html', context)
 
 def playersPage(request):
@@ -156,6 +143,7 @@ def playersPage(request):
                 room = Room.objects.get(room_admin=request.user.username)
                 currentPlayersCount = room.currentPlayersCount
                 messages.info(request, 'You can\'t create or join another room until you delete this room')
+                return redirect('/playersPage')
 
             else:
                 room_code = random.randint(100000,999999)
@@ -164,17 +152,28 @@ def playersPage(request):
                 
                 player1 = request.user
                 player_node = Player(prev=None, player=player1, next=None)
-                room = Room(room_code=room_code, room_admin=request.user.username, no_of_questions=no_of_questions, currentPlayersCount=1, date=datetime.today(), head=player_node, tail=player_node)
-                player_node.in_room = room_code
                 player_node.save()
+                room = Room(room_code=room_code, room_admin=request.user.username, no_of_questions=no_of_questions, currentPlayersCount=1, date=datetime.today(), head=player_node, tail=player_node)
                 room.save()
+                player_node.in_room = room
+                player_node.save()
                 currentPlayersCount = room.currentPlayersCount
 
         elif 'enter_room' in request.POST:
+            user = request.user
+            if Player.objects.filter(player=user).exists():
+                player = Player.objects.get(player=user)
+                room = player.in_room
+                messages.warning(request,f'You\'re already in the room {room.room_code}. Please leave this room first.')
+                return redirect('/playersPage')
+
             admin_user = False
             room_code = request.POST.get('room_code')
             if Room.objects.filter(room_code=room_code).exists():
                 room = Room.objects.get(room_code=room_code)
+                if room.currentPlayersCount >=4:
+                    messages.warning(request, 'Sorry! This room is full.')
+                    return redirect('/room')
                 player1 = request.user
                 addPlayer(player=player1, room=room)
                 
@@ -182,6 +181,21 @@ def playersPage(request):
                 messages.info(request, 'This room doesn\'t exist')
                 return redirect('/enterRoom')
             currentPlayersCount = room.currentPlayersCount
+
+    else:
+        user = request.user
+        if Player.objects.filter(player=user).exists():
+            player = Player.objects.get(player=user)
+            room = player.in_room
+            currentPlayersCount = room.currentPlayersCount
+            if request.user.username == room.room_admin:
+                admin_user = True
+            else:
+                admin_user = False
+        else:
+            messages.warning(request, 'Please Create or join a room first.')
+            return redirect('/room')
+
 
     context= {
         'roomCode': room.room_code,

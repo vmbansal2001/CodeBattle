@@ -37,7 +37,7 @@ class Player(models.Model):
     prev = models.ForeignKey('BattleZone.Player', related_name='prev1', on_delete=models.SET_NULL, null=True)
     player = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     next = models.ForeignKey('BattleZone.Player', related_name='next1', on_delete=models.SET_NULL, null=True)
-    in_room = models.IntegerField(null=True)
+    in_room = models.ForeignKey('BattleZone.Room',on_delete=models.CASCADE,null=True)
 
     def __str__(self):
         return "Player - " + self.player.first_name + " (" + self.player.username + ")"
