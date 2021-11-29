@@ -6,7 +6,7 @@ window.onload = function () {
   editor.setTheme("ace/theme/monokai");
   editor.session.setMode("ace/mode/c_cpp");
   editor.setValue(
-    "#include<iostream> \nusing namespace std; \nint main() \n{\n return 0;\n}"
+    "#include<iostream> \nusing namespace std; \nint main() \n{\n return 0;\n}\n"
   );
 };
 
@@ -18,17 +18,23 @@ function changeLanguage() {
     // document.querySelector("#editor").textContent =
     //   "#include<iostream> using namespace std; int main() {return 0; }";    //didn't work
     editor.setValue(
-      "#include<iostream> \nusing namespace std; \nint main() \n{\n return 0;\n}"
+      "#include<iostream> \nusing namespace std; \nint main() \n{\n return 0;\n}\n"
     );
   } else if (language === "java") {
     editor.session.setMode("ace/mode/java");
     editor.setValue(
-      'public class Main {\n\tpublic static void main(String args[]) {\n\t\tSystem.out.println("Hello World!");\n\t}\n}'
+      'public class Main {\n\tpublic static void main(String args[]) {\n\t\tSystem.out.println("Hello World!");\n\t}\n}\n'
     );
     // input = editor.getValue();
     // console.log(input); // to get value
   } else if (language === "python") {
     editor.session.setMode("ace/mode/python");
-    editor.setValue("print('Hello World')");
+    editor.setValue("print('Hello World')\n");
   }
+}
+
+function executeCode(){
+  codeBuffer = document.querySelector("#bufferCode");
+  editorCode = editor.getValue();
+  codeBuffer.value = editorCode;
 }

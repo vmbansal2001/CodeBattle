@@ -42,25 +42,32 @@
 
   <div class="p-3 bg-white rounded box-shadow">
     <h6 class="pb-2 mb-0">Players in the room</h6>
-    {% for player in players %}
+    {% for username,name in players %}
     <div class="media text-muted row"
       style="background-color:whitesmoke;border-radius: 12px;margin-top: 12px;padding: 12px;">
       <div class="col-1">
-        <img src="{% static 'default.png' %}" alt="" class="mr-2 rounded" style="height: 48px; width: 48px;">
+        <img src="{% static 'default.png' %}" alt="" class="mr-2 rounded" style="height: 42px; width: 42px;">
       </div>
-      <div class="media-body mb-0 small lh-125 col-11">
+      <div class="media-body mb-0 small lh-125 col-10">
         <div class="d-flex justify-content-between w-100">
-          <strong class="text-gray-dark">Player {{ player }}</strong>
-          <a href="#">Follow</a>
+          <strong class="text-gray-dark">{{ name }}</strong>
         </div>
-        <span class="d-block">@username</span>
+        <span class="d-block">{{ username }}</span>
+      </div>
+      <div class="col-1">
+        <a class="btn btn-dark" href="#">Follow</a>
       </div>
     </div>
     {% endfor %}
   </div>
 </main>
 <div style="text-align: center;padding-bottom: 1em;">
-  <a href="/ide" class="btn btn-info btn-lg">Start the battle</a>
+  <form method="post" action="/ide">
+    {% csrf_token %}
+    <input type="text" name="room_code" value="{{ roomCode }}" hidden>
+    <button type="submit" class="btn btn-success btn-lg">Start the Battle</button>
+  </form>
+  <!-- <a href="/ide" class="btn btn-success btn-lg">Start the battle</a> -->
 </div>
 </div>
 

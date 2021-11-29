@@ -1,3 +1,4 @@
+from os import error
 from django.shortcuts import redirect, render
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
@@ -6,6 +7,7 @@ from django.contrib.auth.models import User
 import random
 from datetime import datetime
 from BattleZone.player_add_remove import addPlayer, removePlayer
+from BattleZone.codeExecution import executeUserCode
 
 # Create your views here.
 def index(request): 
@@ -18,7 +20,6 @@ def index(request):
     return render(request, 'index.html', context)
 
 def sign_in(request): 
-    loginStatus = False
     if request.method=="POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -27,8 +28,6 @@ def sign_in(request):
 
         if user is not None:
             login(request, user)
-            loginStatus = True
-            context = {'loginStatus' : loginStatus}
             return redirect('/welcomeNote')
 
         else:
@@ -133,9 +132,15 @@ def playersPage(request):
         return redirect('/sign_in')
 
     if request.method=="POST":
-        currentPlayersCount = 0
         admin_user = None
         if 'create_room' in request.POST:
+            user = request.user
+            if Player.objects.filter(player=user).exists():
+                player = Player.objects.get(player=user)
+                room = player.in_room
+                messages.warning(request,f'You\'re already in the room {room.room_code}. Please leave this room first to join or create a new room.')
+                return redirect('/playersPage')
+
             admin_user = True
             no_of_questions = int(request.POST.get('no_of_questions'))
 
@@ -157,7 +162,6 @@ def playersPage(request):
                 room.save()
                 player_node.in_room = room
                 player_node.save()
-                currentPlayersCount = room.currentPlayersCount
 
         elif 'enter_room' in request.POST:
             user = request.user
@@ -180,14 +184,12 @@ def playersPage(request):
             else:
                 messages.info(request, 'This room doesn\'t exist')
                 return redirect('/enterRoom')
-            currentPlayersCount = room.currentPlayersCount
 
     else:
         user = request.user
         if Player.objects.filter(player=user).exists():
             player = Player.objects.get(player=user)
             room = player.in_room
-            currentPlayersCount = room.currentPlayersCount
             if request.user.username == room.room_admin:
                 admin_user = True
             else:
@@ -196,10 +198,21 @@ def playersPage(request):
             messages.warning(request, 'Please Create or join a room first.')
             return redirect('/room')
 
+    players_list = []
+    player_node = room.head
+    player_node.save()
+    while player_node is not None:
+        username = player_node.player.username
+        name = player_node.player.first_name + " " + player_node.player.last_name
+        players_list.append((username,name))
+        player_node = player_node.next
+        if player_node is not None:
+            player_node.save()
+
 
     context= {
         'roomCode': room.room_code,
-        'players' : range(1,currentPlayersCount+1),
+        'players' : players_list,
         'loginStatus': loginStatus,
         'roomAdmin': room.room_admin,
         'admin_user': admin_user,
@@ -220,16 +233,98 @@ def about(request):
     return render(request, 'about.html', context)
     
 def ide(request):
-    if Room.objects.filter(room_admin=request.user.username):
-        room = Room.objects.get(room_admin=request.user.username)
+    if request.user.is_anonymous:
+        context = {'loginStatus' : False}
+        return render(request, 'register.html', context)
+        
+    if request.method=="POST":
+        room_code = request.POST.get('room_code')
+        room = Room.objects.get(room_code=room_code)
         no_of_questions = int(room.no_of_questions)
-        loginStatus = True
-        if request.user.is_anonymous:
-            return redirect('/sign_in')
+
+        players_list = []
+        player_node = room.head
+        player_node.save()
+        while player_node is not None:
+            username = player_node.player.username
+            name = player_node.player.first_name + " " + player_node.player.last_name
+            score = player_node.score
+            players_list.append((username,name,score))
+            player_node = player_node.next
+            if player_node is not None:
+                player_node.save()
+
         context = {
-            'loginStatus' : loginStatus,
-            'no_of_questions': range(1,no_of_questions+1),
+            'no_of_questions':range(1,no_of_questions+1),
+            'players': players_list,
+            'roomCode': room_code,
+            'result': "",
+            'error': "",
         }
+
         return render(request, 'ide.html', context)
+
     else:
-        return redirect('/createRoom')
+        return redirect('/playersPage')
+
+
+def executeCode(request):
+    if request.user.is_anonymous:
+        context = {'loginStatus' : False}
+        return render(request, 'register.html', context)
+        
+    if request.method=="POST":
+        room_code = request.POST.get('room_code')
+        room = Room.objects.get(room_code=room_code)
+        no_of_questions = int(room.no_of_questions)
+
+        players_list = []
+        player_node = room.head
+        player_node.save()
+        while player_node is not None:
+            username = player_node.player.username
+            name = player_node.player.first_name + " " + player_node.player.last_name
+            score = player_node.score
+            players_list.append((username,name,score))
+            player_node = player_node.next
+            if player_node is not None:
+                player_node.save()
+
+        language = request.POST.get('language')
+        bufferCode = request.POST.get('bufferCode')
+        result, error = executeUserCode(language, bufferCode)
+        if result is not None:
+            result = result.splitlines()
+        else:
+            result = []
+        if error is not None:
+            error = error.splitlines()
+        else:
+            error = []
+
+        context = {
+            'no_of_questions':range(1,no_of_questions+1),
+            'players': players_list,
+            'roomCode': room_code,
+            'result': result,
+            'error': error,
+        }
+
+        return render(request, 'ide.html', context)
+
+    else:
+        return redirect('/playersPage')
+
+
+
+    # if Room.objects.filter(room_admin=request.user.username):
+    #     room = Room.objects.get(room_admin=request.user.username)
+    #     no_of_questions = int(room.no_of_questions)
+    #     loginStatus = True
+    #     context = {
+    #         'loginStatus' : loginStatus,
+    #         'no_of_questions': range(1,no_of_questions+1),
+    #     }
+    #     return render(request, 'ide.html', context)
+    # else:
+    #     return redirect('/playersPage')
