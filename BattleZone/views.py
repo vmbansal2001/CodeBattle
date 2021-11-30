@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 import random
 from datetime import datetime
 from BattleZone.player_add_remove import addPlayer, removePlayer
-from BattleZone.codeExecution import executeUserCode
+from BattleZone.codeExecution import executeUserPythonCode, executeUserJavaCode
 
 # Create your views here.
 def index(request): 
@@ -260,6 +260,8 @@ def ide(request):
             'roomCode': room_code,
             'result': "",
             'error': "",
+            'bufferCode': "#include<iostream> \nusing namespace std; \nint main() \n{\n return 0;\n}\n",
+            'language' : "c++"
         }
 
         return render(request, 'ide.html', context)
@@ -292,7 +294,13 @@ def executeCode(request):
 
         language = request.POST.get('language')
         bufferCode = request.POST.get('bufferCode')
-        result, error = executeUserCode(language, bufferCode)
+
+        if language == "python":
+            result, error = executeUserPythonCode(bufferCode)
+        elif language == "java":
+            result, error = executeUserJavaCode(bufferCode)
+        else:
+            result, error = None, None
         if result is not None:
             result = result.splitlines()
         else:
@@ -308,6 +316,8 @@ def executeCode(request):
             'roomCode': room_code,
             'result': result,
             'error': error,
+            'bufferCode': bufferCode,
+            'language': language,
         }
 
         return render(request, 'ide.html', context)
