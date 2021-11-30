@@ -25,6 +25,14 @@ def index(request):
 
 
 
+# Practice
+def practice(request):
+    return render(request, 'practice.html')
+
+
+
+
+
 
 
 # Sign-In Page

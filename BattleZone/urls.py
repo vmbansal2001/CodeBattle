@@ -32,6 +32,7 @@ urlpatterns = [
     path('about', views.about, name='about'), #About Page
     path('ide', views.ide, name='ide'), #IDE
     path('executeCode', views.executeCode, name='executeCode'), #To execute IDE code
+    path('practice', views.practice, name='practice'),
     path('favicon.ico',
         RedirectView.as_view(url=staticfiles_storage.url("favicon.ico")),
     ),

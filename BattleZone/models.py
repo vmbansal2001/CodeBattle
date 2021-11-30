@@ -60,3 +60,30 @@ class Room(models.Model):
 
     def __str__(self):
         return str(self.room_code)
+
+
+
+
+
+# Question model
+class Question(models.Model):
+    qcode = models.CharField(max_length=10, primary_key=True)
+    score = models.IntegerField(default=100)
+    title = models.CharField(max_length=100)
+    desc = models.TextField()
+    constraints = models.CharField(max_length=100)
+    sample_input = models.TextField()
+    sample_output = models.TextField()
+    explanation = models.TextField()
+    testCases = models.IntegerField(default=5)
+    t1_in = models.TextField()
+    t1_out = models.TextField()
+    t2_in = models.TextField()
+    t2_out = models.TextField()
+    t3_in = models.TextField()
+    t3_out = models.TextField()
+    t4_in = models.TextField()
+    t4_out = models.TextField()
+    t5_in = models.TextField()
+    t5_out = models.TextField()
+
