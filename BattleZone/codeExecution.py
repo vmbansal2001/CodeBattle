@@ -3,6 +3,7 @@ import sys, os
 from subprocess import Popen, PIPE, TimeoutExpired
 from time import time
 
+# Execute Python Code
 def executeUserPythonCode(code):
     process = Popen([sys.executable,"-c", code], stdin = PIPE, stdout = PIPE, stderr = PIPE)
     try:
@@ -26,6 +27,8 @@ def executeUserPythonCode(code):
         error = "TimeOut: The code execution took very long time"
     return output, error
 
+
+# Execute Java Code
 def executeUserJavaCode(code):
     code = code.replace("\r","")
     with open("BattleZone\codeBuffers\Main.java",'w') as f:
@@ -90,6 +93,9 @@ def executeUserJavaCode(code):
         error = "TimeOut: The code execution took very long time"
 
     return finaloutput, finalerror
+
+
+# Execute C++ Code
 
 def executeUserCPPCode(code):
     code = code.replace("\r","")

@@ -1,4 +1,5 @@
 from os import error
+from typing import Text
 from django.shortcuts import redirect, render
 from django.contrib.auth import logout, authenticate, login
 from django.contrib import messages
@@ -9,7 +10,7 @@ from datetime import datetime
 from BattleZone.player_add_remove import addPlayer, removePlayer
 from BattleZone.codeExecution import executeUserPythonCode, executeUserJavaCode, executeUserCPPCode
 
-# Create your views here.
+# Home Page
 def index(request): 
     loginStatus = True
     if request.user.is_anonymous:
@@ -19,6 +20,14 @@ def index(request):
     }
     return render(request, 'index.html', context)
 
+
+
+
+
+
+
+
+# Sign-In Page
 def sign_in(request): 
     if request.method=="POST":
         username = request.POST.get('username')
@@ -37,11 +46,20 @@ def sign_in(request):
         context = {'loginStatus' : False}
         return render(request, 'register.html', context)
     else:
+        # If a user is already logged in, then redirect to Welcome Page
         context = {'loginStatus' : True}
         return render(request, 'welcomeNote.html', context)
 
+
+
+
+
+
+
+#Sign - Up Page
 def signUp(request):
     if request.method=="POST":
+        #Get all info from request
         username = request.POST.get('username')
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
@@ -52,14 +70,17 @@ def signUp(request):
         occupation = request.POST.get('OccupationOptions')
         language = request.POST.get('language')
 
+        #If user already exists, then redirect to Sign-In Page
         if User.objects.filter(email=email).exists():
             messages.warning(request, 'This user already exists')
-            return redirect('/signUp')
+            return redirect('/sign_in')
 
+        #Username isn't available
         if User.objects.filter(username=username).exists():
             messages.warning(request, 'This username isn\'t available')
             return redirect('/signUp')
         
+        #Create new User
         user = User.objects.create_user(username, email, password)
         user.first_name = first_name
         user.last_name = last_name
@@ -77,64 +98,96 @@ def signUp(request):
     if request.user.is_anonymous:
         return render(request, 'signup.html')
     else:
+        #If user already logged-in, then redirect to Welcome Page
         return redirect('/welcomeNote')
     
 
+
+
+
+
+
+#Welcome Page for registered Users
 def welcomeNote(request):
+    #If user is not logged in, redirect to login page
     if request.user.is_anonymous:
         return redirect('/sign_in')
     else:
         context = {'loginStatus' : True}
         return render(request, 'welcomeNote.html', context)
 
+
+
+
+
+
+#Room Page to ask to create for a new room, or enter an existing one
 def room(request):
-    loginStatus = True
     if request.user.is_anonymous:
         return redirect('/sign_in')
-    context = {
-        'loginStatus' : loginStatus,
-    }
+    context = {'loginStatus' : True}
     return render(request, 'room.html', context)
 
+
+
+
+
+
+#Create room page which asks the no. of questions from the user
 def createRoom(request):
-    loginStatus = True
     if request.user.is_anonymous:
         return redirect('/sign_in')
-    context = {
-        'loginStatus' : loginStatus,
-    }
+    context = {'loginStatus' : True}
 
+    #Request to delete the room
     if request.method=="POST":
         if Room.objects.filter(room_admin=request.user.username):
             room = Room.objects.get(room_admin=request.user.username)
             room.delete()
-
     return render(request, 'createRoom.html', context)
 
+
+
+
+
+
+
+
+#Enter room page which asks for the room code from the user
 def enterRoom(request):
-    loginStatus = True
+    if request.user.is_anonymous:
+        return redirect('/sign_in')
+
+    #Request to leave a room
     if request.method == "POST":
         room_code = request.POST.get('room_code')
         room = Room.objects.get(room_code=room_code)
         player1 = request.user
         removePlayer(room=room, player=player1)
 
-    if request.user.is_anonymous:
-        return redirect('/sign_in')
-    context = {
-        'loginStatus' : loginStatus,
-    }
+    context = {'loginStatus' : True}
     return render(request, 'enterRoom.html', context)
 
+
+
+
+
+
+
+#Players Page which shows a proper room, and all players present in the room
 def playersPage(request):
     loginStatus = True
     if request.user.is_anonymous:
         return redirect('/sign_in')
 
+    #All requests handled here, further requests are routed
     if request.method=="POST":
         admin_user = None
+        #Handles request to create a new room
         if 'create_room' in request.POST:
             user = request.user
+
+            #If the user is already in a room, then redirect to old room
             if Player.objects.filter(player=user).exists():
                 player = Player.objects.get(player=user)
                 room = player.in_room
@@ -144,12 +197,12 @@ def playersPage(request):
             admin_user = True
             no_of_questions = int(request.POST.get('no_of_questions'))
 
+            #If room admin is already associated with any other room, redirect to old room
             if Room.objects.filter(room_admin=request.user.username).exists():
-                room = Room.objects.get(room_admin=request.user.username)
-                currentPlayersCount = room.currentPlayersCount
                 messages.info(request, 'You can\'t create or join another room until you delete this room')
                 return redirect('/playersPage')
 
+            #New Room Creation
             else:
                 room_code = random.randint(100000,999999)
                 while Room.objects.filter(room_code=room_code).exists():
@@ -163,8 +216,12 @@ def playersPage(request):
                 player_node.in_room = room
                 player_node.save()
 
+
+        #Handles request to enter in a room
         elif 'enter_room' in request.POST:
             user = request.user
+
+            #If the player is already in another room, redirect to old room
             if Player.objects.filter(player=user).exists():
                 player = Player.objects.get(player=user)
                 room = player.in_room
@@ -173,6 +230,8 @@ def playersPage(request):
 
             admin_user = False
             room_code = request.POST.get('room_code')
+
+            #Add player to the room, also check for full room
             if Room.objects.filter(room_code=room_code).exists():
                 room = Room.objects.get(room_code=room_code)
                 if room.currentPlayersCount >=4:
@@ -181,11 +240,13 @@ def playersPage(request):
                 player1 = request.user
                 addPlayer(player=player1, room=room)
                 
+            #If wrong room code is entered
             else:
                 messages.info(request, 'This room doesn\'t exist')
                 return redirect('/enterRoom')
 
     else:
+        #If anonymous user(who is not in any room) tries to access players page, then redirect to /room
         user = request.user
         if Player.objects.filter(player=user).exists():
             player = Player.objects.get(player=user)
@@ -198,6 +259,8 @@ def playersPage(request):
             messages.warning(request, 'Please Create or join a room first.')
             return redirect('/room')
 
+
+    #Prepare Player list to pass in the playersPage
     players_list = []
     player_node = room.head
     player_node.save()
@@ -219,29 +282,47 @@ def playersPage(request):
     }
     return render(request, 'players.html', context)
 
+
+
+
+
+
+#To handle Logout request
 def logoutUser(request):
     logout(request)
     return redirect('/')
 
+
+
+
+
+#About Page
 def about(request):
     loginStatus = True
     if request.user.is_anonymous:
         loginStatus = False
-    context = {
-        'loginStatus' : loginStatus,
-    }
+    context = {'loginStatus' : loginStatus}
     return render(request, 'about.html', context)
     
+
+
+
+
+
+#IDE
 def ide(request):
     if request.user.is_anonymous:
         context = {'loginStatus' : False}
         return render(request, 'register.html', context)
         
     if request.method=="POST":
+        #Get all request Information
         room_code = request.POST.get('room_code')
         room = Room.objects.get(room_code=room_code)
         no_of_questions = int(room.no_of_questions)
 
+
+        #Prepare a players list to pass in IDE leaderboard
         players_list = []
         player_node = room.head
         player_node.save()
@@ -266,10 +347,19 @@ def ide(request):
 
         return render(request, 'ide.html', context)
 
+    #If anyone directly tries to access /ide, redirect to playersPage or Sign-In page
     else:
         return redirect('/playersPage')
 
 
+
+
+
+
+
+
+#To execute the IDE Code
+#This funtion is very much identical to 'ide' function, it is just capable to execute the code.
 def executeCode(request):
     if request.user.is_anonymous:
         context = {'loginStatus' : False}
@@ -329,14 +419,3 @@ def executeCode(request):
 
 
 
-    # if Room.objects.filter(room_admin=request.user.username):
-    #     room = Room.objects.get(room_admin=request.user.username)
-    #     no_of_questions = int(room.no_of_questions)
-    #     loginStatus = True
-    #     context = {
-    #         'loginStatus' : loginStatus,
-    #         'no_of_questions': range(1,no_of_questions+1),
-    #     }
-    #     return render(request, 'ide.html', context)
-    # else:
-    #     return redirect('/playersPage')

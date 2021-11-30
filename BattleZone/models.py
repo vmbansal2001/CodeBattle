@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 
+# PersonalInfo2 model to extend default django user model
 class PersonalInfo2(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     City = models.CharField(max_length=100)
@@ -33,6 +34,8 @@ class PersonalInfo2(models.Model):
 
     PreferredProgrammingLanguage = models.CharField(max_length=10, choices=LANGUAGE_CHOICES)
 
+
+# Player model which is made using django user, which stores a player's score and room information
 class Player(models.Model):
     prev = models.ForeignKey('BattleZone.Player', related_name='prev1', on_delete=models.SET_NULL, null=True)
     player = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
@@ -43,6 +46,8 @@ class Player(models.Model):
     def __str__(self):
         return "Player - " + self.player.first_name + " (" + self.player.username + ")"
 
+
+# Room model which contains the info of players competing against each other (implements Player LinkedList System)
 class Room(models.Model):
     room_code = models.IntegerField(primary_key=True)
     room_admin = models.CharField(max_length=100)

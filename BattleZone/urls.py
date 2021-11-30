@@ -18,16 +18,16 @@ from django.urls import path, include
 from BattleZone import views
 
 urlpatterns = [
-    path('', views.index, name='home'),
-    path('sign_in', views.sign_in, name='sign_in'),
-    path('welcomeNote',views.welcomeNote, name='welcome'),
-    path('room',views.room, name='room'),
-    path('createRoom',views.createRoom, name='createRoom'),
-    path('enterRoom',views.enterRoom, name='enterRoom'),
-    path('playersPage',views.playersPage, name='playersPage'),
-    path('signUp',views.signUp, name='signUp'),
-    path('logout', views.logoutUser, name='logout'),
-    path('about', views.about, name='about'),
-    path('ide', views.ide, name='ide'),
-    path('executeCode', views.executeCode, name='executeCode'),
+    path('', views.index, name='home'), #Home Page
+    path('sign_in', views.sign_in, name='sign_in'), #Sign in page
+    path('welcomeNote',views.welcomeNote, name='welcome'), #Welcome home page
+    path('room',views.room, name='room'), #Room page (create or enter room)
+    path('createRoom',views.createRoom, name='createRoom'), #Create room page
+    path('enterRoom',views.enterRoom, name='enterRoom'), #Enter a room page
+    path('playersPage',views.playersPage, name='playersPage'), #Players page
+    path('signUp',views.signUp, name='signUp'), #Sign Up page
+    path('logout', views.logoutUser, name='logout'), #Logout User
+    path('about', views.about, name='about'), #About Page
+    path('ide', views.ide, name='ide'), #IDE
+    path('executeCode', views.executeCode, name='executeCode'), #To execute IDE code
 ]

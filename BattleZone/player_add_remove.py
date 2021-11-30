@@ -1,5 +1,6 @@
 from BattleZone.models import Player
 
+# Function to add a player to a room
 def addPlayer(player, room):
     new_player = Player(player=player, next=None, prev=None, in_room=room)
     new_player.save()
@@ -13,6 +14,7 @@ def addPlayer(player, room):
     room.currentPlayersCount+=1
     room.save()
 
+# Function to remove a player from a room
 def removePlayer(room, player):
     node = room.head
     node.save()

@@ -4,9 +4,13 @@ window.onload = function () {
   codeBuffer = document.querySelector("#bufferCode").value;
   language = document.querySelector("#languages").value;
   editor = ace.edit("editor");
-  editor.setTheme("ace/theme/monokai");
+  editor.setTheme("ace/theme/pastel_on_dark");
 
   editor.setValue(codeBuffer);
+
+  editor.setOptions({
+    fontSize: "13pt"
+  });
 
   if (language === "c++") {
     editor.session.setMode("ace/mode/c_cpp");
